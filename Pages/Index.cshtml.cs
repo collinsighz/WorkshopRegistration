@@ -11,11 +11,14 @@ public class IndexModel : PageModel
     public List<string> errors { get; set; } = new List<string>();
     public List<Registration> savedRegistrations { get; set; } = new List<Registration>();
 
-    public List<string> workshops { get; set; } = new List<string>
+        public List<string> workshops { get; set; } = new List<string>
     {
-        "C# Basics",
-        "Web Pages with Razor",
-        "Intro to Databases"
+        "Irish",
+        "Science",
+        "Maths",
+        "Engineering",
+        "Art",
+        "Music"
     };
 
     public int minAge { get; set; } = 16;
