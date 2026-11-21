@@ -1,10 +1,107 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Workshop Registration";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Workshop Registration</h2>
+
+@* Error messages (user story: clear message when invalid) *@
+@if (Model.errors.Count > 0)
+{
+    <div class="alert alert-danger">
+        <strong>Please fix the following:</strong>
+        <ul>
+            @foreach (string error in Model.errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@* Confirmation (user story: see confirmation of details) *@
+@if (Model.confirmed != null)
+{
+    <div class="alert alert-success">
+        <h5>@Model.message</h5>
+        <p><strong>First name:</strong> @Model.confirmed.FirstName</p>
+        <p><strong>Age:</strong> @Model.confirmed.Age</p>
+        <p><strong>Workshop:</strong> @Model.confirmed.Workshop</p>
+        <p><strong>Laptop required:</strong> @Model.confirmed.LaptopText()</p>
+    </div>
+}
+
+@* The form: method="POST" sends the data to OnPost() *@
+<form method="POST">
+
+    <div class="mb-3">
+        <label for="firstName" class="form-label">First name</label>
+        <input type="text" id="firstName" name="firstName" class="form-control"
+               value="@Model.firstNameInput"
+               required minlength="2" maxlength="30"
+               pattern="[\p{L} '\-]+"
+               title="Letters, spaces, hyphens and apostrophes only" />
+    </div>
+
+    <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input type="number" id="age" name="age" class="form-control"
+               value="@Model.ageInput"
+               required min="@Model.minAge" max="@Model.maxAge" />
+        <div class="form-text">Between @Model.minAge and @Model.maxAge.</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="workshop" class="form-label">Workshop</label>
+        <select id="workshop" name="workshop" class="form-select" required>
+            <option value="">-- Choose a workshop --</option>
+            @foreach (string w in Model.workshops)
+            {
+                <option value="@w" selected="@(w == Model.workshopInput)">@w</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label d-block">Do you require a laptop?</label>
+        <input type="radio" id="laptopYes" name="laptop" value="true"
+               checked="@(Model.laptopInput == "true")" required />
+        <label for="laptopYes">Yes</label>
+        &nbsp;
+        <input type="radio" id="laptopNo" name="laptop" value="false"
+               checked="@(Model.laptopInput == "false")" />
+        <label for="laptopNo">No</label>
+    </div>
+
+    <input type="submit" value="Register" class="btn btn-primary" />
+</form>
+
+<hr />
+
+@* Saved registrations read back from the file (user story: organiser views later) *@
+<h4>Saved registrations</h4>
+
+@if (Model.savedRegistrations.Count == 0)
+{
+    <p>No registrations have been saved yet.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr><th>First name</th><th>Age</th><th>Workshop</th><th>Laptop</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model.savedRegistrations)
+            {
+                <tr>
+                    <td>@r.FirstName</td>
+                    <td>@r.Age</td>
+                    <td>@r.Workshop</td>
+                    <td>@r.LaptopText()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
